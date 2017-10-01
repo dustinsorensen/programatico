@@ -1,5 +1,20 @@
 {% extends "layout.html.twig" %}
 
 {% block content %}
-    <h1>Welcome to your new Silex Application!</h1>
+{% verbatim %}
+    <div class="jumbotron">
+    		<h1>Learn Spanish Like a Programmer!</h1>
+        <p>Select a conversation below, and find out if you can "compile" it!</p>
+    </div>
+
+    <div id="conversations">
+      <div class="list-group">
+      	<div v-for="convo in convos">
+	        <a v-if="convo.language == 'en'" :href="'/conversations/' + convo.sequence + '/' + convo.part" class="list-group-item">
+	          Sequence {{ convo.sequence }} Part {{ convo.part }} - {{ convo.conversation[0].text }}
+	        </a>
+	      </div>
+      </div>
+    </div>
+{% endverbatim %}
 {% endblock %}

@@ -1,0 +1,41 @@
+{% extends "layout.html.twig" %}
+
+{% block content %}
+
+    <div id="conversations">
+     <div v-for="convo in convos">
+        <div v-if="convo.language == 'en' && convo.sequence == {{ sequence }} && convo.part == {{ part }}">
+          <div v-for="(spoken, index) in convo.conversation" class="list-group">
+            {% verbatim %}
+            <h5><i>{{ spoken.speaker }}:</i> {{ spoken.text }}</h5>
+              <div v-if="currentSentence == index && !failed" class="input-group" :class="{'fadeIn animated': currentSentence == index}" @animationend="focus()">
+                <span class="input-group-addon" id="basic-addon1">{{ spoken.speaker }}</span>
+                <input ref="translation_input" v-on:keyup.enter="checkText(translated[index], index, convo.sequence, convo.part)" v-model="translated[index]" type="text" class="form-control" v-bind:placeholder="spoken.text" aria-describedby="basic-addon1">
+                <span class="input-group-btn">
+                  <button v-on:click="checkText(translated[index], index, convo.sequence, convo.part)" class="btn btn-default" type="button">Check!</button>
+                </span>
+              </div>
+            <div class="panel panel-default" v-if="results[index]" :class="{'shake animated': incorrect[index], 'tada animated': completed[index]}" @animationend="incorrect[index] = false">
+              <div class="panel-body" v-html="results[index]"></div>
+            </div>
+            {% endverbatim %}
+          </div>            
+        </div>
+      </div>
+      <nav class="navbar navbar-default navbar-fixed-bottom">
+        <div class="container">
+          <div class="panel panel-default" >
+            <div class="panel-body">
+              <transition mode="out-in" leave-active-class="animated fadeOut" enter-active-class="animated fadeIn">
+                <div v-if="!failed" key="remaining">
+                  Attempts remaining <span class="badge">{% verbatim %} {{ attemptsRemaining }} {% endverbatim %}</span>
+                </div>
+                <span v-if="failed" key="finished" class="alert alert-danger" role="alert">Oh no! You are out of chances, please <a href="/conversations/{{ sequence }}/{{ part }}" class="alert-link">start over and try again!</a></span>                  
+              </transition>
+            </div>  
+          </div>
+        </div>
+      </nav>
+    </div>
+
+{% endblock %}
